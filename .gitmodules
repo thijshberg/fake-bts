@@ -1,0 +1,3 @@
+[submodule "sig-raytracer"]
+	path = sig-raytracer
+	url = git@github.com:thijshberg/sig-raytracer.git

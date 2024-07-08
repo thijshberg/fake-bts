@@ -1,0 +1,130 @@
+{
+    "initial":[{
+        "meas_id":0,
+        "event_id":"periodical",
+        "frequency":"intra",
+        "report_amount":0,
+        "report_interval":0,
+        "max_report_cells":1
+        },{
+        "meas_id":0,
+        "event_id":"periodical",
+        "frequency":"inter",
+        "report_amount":0,
+        "report_interval":6,
+        "max_report_cells":2
+        },{
+        "meas_id":2,
+        "event_id": "a2",
+        "report_amount":7,
+        "report_interval":8,
+        "parameters":{
+            "threshold": "INITIAL_A2_THRESHOLD"
+        }}
+    ],
+    "signal_worsening_stepsize":5,
+    "initial_a1_threshold":-80,
+    "initial_a2_threshold":-70,
+    "initial_a3_offset":3,
+    "initial_a4_threshold":-90,
+    "initial_a5_threshold1":-90,
+    "initial_a5_threshold2":-80,
+    "max_stored_neighbours":3,
+    "weakness_formula":"math.ceil(-(signal-INITIAL_A2_THRESHOLD) / SIGNAL_WORSENING_STEPSIZE)",
+    "conditionals":[
+        {
+            "condition":"weakness > 0",
+            "meas_to_add_mod":[
+                {
+                    "meas_id":1,
+                    "event_id": "a1",
+                    "report_amount":7,
+                    "report_interval":5,
+                    "parameters":{
+                        "threshold": "INITIAL_A2_THRESHOLD - (weakness-1)*SIGNAL_WORSENING_STEPSIZE"
+                    }
+                },
+                {
+                    "meas_id":2,
+                    "event_id": "a2",
+                    "report_amount":7,
+                    "report_interval":5,
+                    "parameters":{
+                        "threshold": "INITIAL_A2_THRESHOLD - (weakness+1)*SIGNAL_WORSENING_STEPSIZE"
+                    }
+                }
+            ]
+        },
+        {
+            "condition":"weakness ==0",
+            "meas_to_remove":[1,2,3]   
+        },
+        {
+            "condition":"weakness <= 2",
+            "meas_to_remove":[3]
+        },
+        {
+            "condition":"weakness < 0",
+            "meas_to_add_mod":[
+                {
+                    "meas_id":2,
+                    "event_id": "a2",
+                    "report_amount":7,
+                    "report_interval":7,
+                    "parameters":{
+                        "threshold": "INITIAL_A2_THRESHOLD"
+                    }
+                }
+            ],
+            "meas_to_remove":[1]
+        },{
+            "condition":"weakness > 2",
+            "expand_targets":1,
+            "meas_to_add_mod":[{
+                "meas_id": 3,
+                "event_id": "a3",
+                "frequency":"intra",
+                "report_amount":7,
+                "report_interval":6,
+                "max_report_cells":3,
+                "parameters":{
+                    "offset": "INITIAL_A3_OFFSET"
+                }}
+            ]
+        },{
+            "condition":"weakness > 4",
+            "expand_targets":1,
+            "meas_to_add_mod":[{
+                "meas_id": 5,
+                "event_id": "a3",
+                "frequency":"inter",
+                "report_amount":7,
+                "report_interval":6,
+                "max_report_cells":3,
+                "parameters":{
+                    "offset": "INITIAL_A3_OFFSET"
+                }}
+            ]
+        },{
+            "condition":"weakness > 8",
+            "disconnect":1
+        }
+    ],
+    "handover":{ 
+        "condition": "weakness > 2",
+        "secondary": "neighbour_signal > -120 and neighbour_signal > (serving_signal + 3)"
+    },
+    "handover_failure":{
+        "expand_targets":1,
+        "meas_to_add_mod":[{
+                "meas_id": 4,
+                "event_id": "a4",
+                "report_amount":7,
+                "report_interval":6,
+                "max_report_cells":3,
+                "parameters":{
+                    "threshold":"INITIAL_A4_THRESHOLD" 
+                }
+        }]
+    }
+}
