@@ -10,6 +10,7 @@ from typing import List, Optional, Tuple
 
 from amarisoft_gain import set_amarisoft_gain as _set_amarisoft_gain
 
+#Change this to your own setup
 AMARI_IP = "192.168.1.114"
 AMARI_PCI = 1
 SRS_PCI = 2
@@ -17,7 +18,8 @@ SRS_PCI = 2
 HUAWEI = False
 DEBUG = False
 
-SRS_CMD = "/home/thijs/srs/srsmain/build/srsenb/src/srsenb /home/thijs/srs/configs/enb_amarisoft.conf"
+#Change this to your own setup
+SRS_CMD = "srsenb enb.conf"
 
 
 def debug(*args, **kwargs):
@@ -64,9 +66,9 @@ def toggle_airplane_mode():
             debug("Tapping")
             subprocess.run("adb shell input tap 950 345".split())
         else:
-            debug("Key even 19")
+            debug("Key event 19")
             subprocess.run("adb shell input keyevent 19".split())
-            debug("Key even 23")
+            debug("Key event 23")
             subprocess.run("adb shell input keyevent 23".split())
         sleep(3)
 
